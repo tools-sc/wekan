@@ -1,4 +1,10 @@
 Meteor.startup(() => {
+
+  Accounts.validateLoginAttempt(function (options) {
+    const user = options.user || {};
+    return !user.loginDisabled;
+  });
+
   Authentication = {};
 
   Authentication.checkUserId = function (userId) {

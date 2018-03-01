@@ -1,3 +1,336 @@
+# Upcoming Wekan release
+
+This release fixes the following bugs:
+
+- [Fix lint errors related to sandstorm](https://github.com/wekan/wekan/commit/0a16147470246c8f49bb918f5ddc7bb2e54fba14);
+- [Add Swimlanes to globals](https://github.com/wekan/wekan/commit/373e9782dcf87a9c1169b5d1f8175ce14e4898c9);
+- [Fix lint errors related to trello creator](https://github.com/wekan/wekan/commit/951a0db380d60f3d948ae38d50b85a54983a51de);
+- [Fix lint errors related to language names](https://github.com/wekan/wekan/commit/c0d33d97f2c8d4e9371a03d4ad3022df3ed64d3d);
+- [Allow swimlanes reordering](https://github.com/wekan/wekan/commit/37c94622e476f50bf2387bc8b140454d66200e78);
+- [Avoid swimlane title overlap](https://github.com/wekan/wekan/commit/c4fa9010f34966b633c7bf7e46ad49fc101127c9);
+- [Fix scrollbar inside list and outer scroll](https://github.com/wekan/wekan/commit/a033c35a3411902b9bf8f62a40cd68f641e573d3).
+
+Thanks to GitHub users andresmanelli and GhassenRjab for their contributions.
+
+# v0.77 2018-02-23 Wekan release
+
+This release adds the following new features:
+
+- [Search from card titles and descriptions on this board](https://github.com/wekan/wekan/pull/1503).
+- Add Bulgarian language.
+
+and adds the following [Snap updates](https://github.com/wekan/wekan/pull/1495):
+
+- Cleanup of snap helper scripts
+- Cleanup and snapctl settings handling
+- Fix for snap store auto review refusal
+- Adding support for automatic restart of services when setting(s) are changed.
+  No need to call systemctl restart anymore
+- Fixing snap set functionality
+- Adding optional caddy service support (by default caddy service is disabled),
+  it can be enabled by calling: snap set wekan caddy-enabled=true
+- [Service life cycle improvements](https://github.com/wekan/wekan/pull/1495)
+- [Wekan help text changes and tweaks](https://github.com/wekan/wekan/pull/1495).
+
+and fixes the following bugs:
+
+- [Fix: card-shadow no longer covered the page if you scroll down](https://github.com/wekan/wekan/pull/1496).
+
+Thanks to GitHub users GhassenRjab, kubiko and stefano-pogliani for their contributions.
+
+# v0.76 2018-02-21 Wekan release
+
+This release adds the following new features:
+
+- [Add swimlaneId to POST /api/boards/:boardId/lists/:listId/cards route](https://github.com/wekan/wekan/commit/ee0f42eeb1b10107bd8fc38cdefbdbc4f3fde108);
+- [Added path to capnp.js to make Wekan work on Sandstorm](https://github.com/wekan/wekan/commit/11e9811f82858a3d98036e142b0da69d867adebc).
+
+Known bugs:
+
+- [Disabled Import temporarily on Sandstorm because of data loss bug](https://github.com/wekan/wekan/commit/e30f6515c623de7a48f25e0b2fc75313ae5d187c);
+- [Swimlane not visible at Sandstorm](https://github.com/wekan/wekan/issues/1494).
+
+Thanks to GitHub users couscous3 and xet7 for their contributions.
+
+# v0.75 2018-02-16 Wekan release
+
+This release adds the following new features:
+
+- [Checklist templates](https://github.com/wekan/wekan/pull/1470);
+- Added [Finnish language changelog](https://github.com/wekan/wekan/tree/devel/meta/t9n-changelog)
+  and [more Finnish traslations](https://github.com/wekan/wekan/blob/devel/sandstorm-pkgdef.capnp)
+  to Sandstorm.
+
+Thanks to GitHub users erikturk and xet7 for their contributions.
+
+# v0.74 2018-02-13 Wekan release
+
+This release fixes the following bugs:
+
+- [Remove Emoji support, so MAC addresses etc show correctly](https://github.com/wekan/wekan/commit/056843d66c361594d5d4478cfe86e2e405333b91).
+  NOTE: You can still add Unicode Emojis, this only removes broken autoconversion to Emojis.
+
+Thanks to GitHub user xet7 for contributions.
+
+# v0.73 2018-02-08 Wekan release
+
+This release fixes the following bugs:
+
+- [Fix Ubuntu snap build](https://github.com/wekan/wekan/pull/1469).
+
+Thanks to GitHub user kubiko for contributions.
+
+# v0.72 2018-02-07 Wekan release
+
+This release fixes the following bugs:
+
+- [Fix card sorting](https://github.com/wekan/wekan/pull/1465);
+- [Fix import Trello board without swimlanes](https://github.com/wekan/wekan/commit/5871a478e1280818f12fcb7250b7cbccf6907cf0);
+- [Fix swimlane move parameters](https://github.com/wekan/wekan/commit/fcebb2a5373d6dea41b98b530c176cbee31bee4b).
+
+Thanks to GitHub users andresmanelli and ViViDboarder for their contributions.
+
+# v0.71 2018-02-03 Wekan release
+
+This release fixes the following bugs:
+
+- [Fix Welcome board is not editable: Added default swimlane to Welcome board](https://github.com/wekan/wekan/commit/9df3e3d26bffb2268cdcc7fa768eda60e4f0975c);
+- [Fix Import Wekan board with swimlanes](https://github.com/wekan/wekan/commit/ec0a8449ba98aea708e484d386e5a209e2be8fff).
+
+Thanks to GitHub user andresmanelli for contributions.
+
+# v0.70 2018-02-02 Wekan release
+
+This release adds the following new features:
+
+- [Add ability to edit swimlane name](https://github.com/wekan/wekan/commit/3414cb84ad8ac800e23bbda6ce12822f40d1bd19);
+- [Add swimlane popup menu and archive icon](https://github.com/wekan/wekan/commit/5953fb8a44a3582ed0d8816ffb32a5b7f41f50a3).
+
+and fixes the following bugs:
+
+- [Two empty columns in swimlane view](https://github.com/wekan/wekan/issues/1459).
+
+Thanks to GitHub user andresmanelli for contributions.
+
+# v0.69 2018-02-01 Wekan release
+
+This release fixes the following bugs:
+
+- [Fix swimlanes card details bug](https://github.com/wekan/wekan/commit/f6fb05d3f49c656e9890351f5d7c0827bf2605c1);
+- [Workaround to avoid swimlanes drag bug](https://github.com/wekan/wekan/commit/d3c110cd8f3ad16a4ced5520c27ab542cc79b548);
+- [Fix swimlanes details view in lists only mode](https://github.com/wekan/wekan/commit/ff9ca755f338e3c45a1bd726dfbce1c607f2ff4c).
+- [Fix typo in issue template](https://github.com/wekan/wekan/pull/1451).
+
+Thanks to GitHub users andresmanelli and d-Rickyy-b for their contributions.
+
+# v0.68 2018-01-30 Wekan release
+
+This release fixes the following bugs:
+
+* [Partial fix: Trello board import fails because of missing "Swimlane id"](https://github.com/wekan/wekan/issues/1442), still needs some work.
+
+Thanks to GitHub user xet7 for contributions.
+
+# v0.67 2018-01-28 Wekan release
+
+This release fixes the following bugs:
+
+* [Fix Igbo language name at menu](https://github.com/wekan/wekan/commit/9d7ff75d3fed1285273245fbe6f6a757b6180039).
+
+Thanks to GitHub user xet7 for contributions.
+
+# v0.66 2018-01-28 Wekan release
+
+This release fixes the following bugs:
+
+* [Fix Dockerfile for Debian](https://github.com/wekan/wekan/pull/1439).
+
+Thanks to GitHub user soohwa for contributions.
+
+# v0.65 2018-01-28 Wekan release
+
+This release adds the following new features:
+
+* [Swimlanes, part 1](https://github.com/wekan/wekan/issues/955);
+* Added new language: Igbo.
+
+Thanks to GitHub user andresmanelli for contributions.
+
+# v0.64 2018-01-22 Wekan release
+
+This release adds the following new features:
+
+* [Different icons for start and due date](https://github.com/wekan/wekan/pull/1420).
+* Added new languages: Mongolian and Portuguese;
+* Upgraded to Meteor 1.6.0.1, Node 8.9.3, NPM 5.5.1 and fibers 2.0.0.
+
+and fixes the following bugs:
+
+* [Fix for dragging into scrolled-down list](https://github.com/wekan/wekan/pull/1424).
+* [Fix double slash bug on snap](https://github.com/wekan/wekan/issues/962#issuecomment-357785748).
+
+Thanks to GitHub users dpoznyak, mmarschall and xet7 for their contributions.
+
+# v0.63 2017-12-20 Wekan release
+
+This release adds the following new features:
+
+* [Auto update card cover with new image uploaded via drag&drop](https://github.com/wekan/wekan/pull/1401);
+* Update to Node 4.8.7.
+
+Thanks to GitHub users thuanpq and xet7 for their contributions.
+
+# v0.62 2017-12-12 Wekan release
+
+This release fixes the following bugs:
+
+* Added missing packages to build script.
+
+Thanks to GitHub user xet7 for contributions.
+
+# v0.61 2017-12-12 Wekan release
+
+This release adds the following new features:
+
+* [Change password of any user in Standalone Wekan Admin Panel](https://github.com/wekan/wekan/pull/1372);
+* [Performance optimization: Move more global subscriptions to template subscription](https://github.com/wekan/wekan/pull/1373);
+* [Auto update card cover with latest uploaded image attachment](https://github.com/wekan/wekan/pull/1387);
+* [Always display attachment section for uploading file quickly](https://github.com/wekan/wekan/pull/1391);
+* [Make it easier to see the Add Card button at top of list](https://github.com/wekan/wekan/pull/1392);
+* [Add mixmax:smart-disconnect to lower CPU usage when browser tab is not selected](https://github.com/wekan/wekan-mongodb/issues/2);
+* Update tranlations. Add Latvian language;
+* Update to Node 4.8.6 and MongoDB 3.2.18.
+
+and fixes the following bugs:
+
+* [Bug on not being able to see Admin Panel if not having access to Board List](https://github.com/wekan/wekan/pull/1371);
+* [Bug on not able to see member avatar on sidebar activity](https://github.com/wekan/wekan/pull/1380);
+* [Don't open swipebox on update card cover / download file / delete file](https://github.com/wekan/wekan/pull/1386);
+* [Boards subscription should be placed at header for all other component can be used](https://github.com/wekan/wekan/pull/1381);
+* [Bug on long url of attachment in card activity log](https://github.com/wekan/wekan/pull/1388).
+
+Thanks to GitHub users mfshiu, thuanpq and xet7 for their contributions.
+Thanks to translators for their translations.
+
+# v0.60 2017-11-29 Wekan release
+
+This release adds the following new features:
+
+* [Add SMTP test email button to Standalone Wekan Admin Panel](https://github.com/wekan/wekan/pull/1359);
+* [Optimize for mobile web, show single list per page with navigate bar](https://github.com/wekan/wekan/pull/1365).
+
+and fixes the following bugs:
+
+* [User with comment only permissions can remove another user from a card](https://github.com/wekan/wekan/pull/1352);
+* [Frequent Subscriptions problem that make Excessive CPU usage](https://github.com/wekan/wekan/pull/1363).
+
+Thanks to GitHub users floatinghotpot, mfshiu and nztqa for their contributions.
+
+# v0.59 2017-11-23 Wekan release.
+
+This release fixes the following bugs:
+
+* [Remove incomplete logger fix](https://github.com/wekan/wekan/pull/1352).
+
+Thanks to GitHub user pierreozoux for contributions.
+
+# v0.58 2017-11-23 Wekan release
+
+This release adds the following new features:
+
+* Updated translations.
+
+Thanks to all translators.
+
+# v0.57 2017-11-23 Wekan release
+
+This release adds the following new features:
+
+* [Gogs Integration](https://github.com/wekan/wekan-gogs) as separate project. Please test and submit issues and pull requests to that project.
+
+and fixes the following bugs:
+
+* [Fix Winston logger](https://github.com/wekan/wekan/pull/1350).
+
+Thanks to GitHub users andresmanelli and pierreozoux for their contributions.
+
+# v0.56 2017-11-21 Wekan release
+
+This release adds the following new features:
+
+* [Copy/Move cards to other board in Standalone Wekan](https://github.com/wekan/wekan/pull/1330);
+* [Spent time/Overtime on card](https://github.com/wekan/wekan/pull/1344);
+* New translation: Greek.
+
+and fixes the following bugs:
+
+* [Board list with long-description boards not visible](https://github.com/wekan/wekan/pull/1346);
+* [Remove erroneous minicard title whitespace](https://github.com/wekan/wekan/pull/1347);
+* [Fix title editing with shift key at card details](https://github.com/wekan/wekan/pull/1348).
+
+Thanks to GitHub users couscous3, GhassenRjab, thuanpq and xet7 for their contributions.
+
+# v0.55 2017-11-19 Wekan release
+
+This release adds the following new features:
+
+* [Markdown in card/minicard/checlist titles and checklist items. Next line: Shift+Enter. Submit: Enter.](https://github.com/wekan/wekan/pull/1334);
+* [User Admin to Admin Panel: List users. Change: is user admin, name, fullname, email address, is user active. Not changing password yet.](https://github.com/wekan/wekan/pull/1325);
+* [REST API better error output](https://github.com/wekan/wekan/pull/1323).
+
+and fixes the following bugs:
+
+* [Emoji detection breaks MAC addresses](https://github.com/wekan/wekan/issues/1248); - this has not yet fixed all cases.
+* [Codeblocks should not be scanned for emoji](https://github.com/wekan/wekan/issues/643);
+* [Whitespace trimming breaks Markdown code block indentation](https://github.com/wekan/wekan/issues/1288):
+* [Helper to list boards for user](https://github.com/wekan/wekan/pull/1327);
+* [Error after sending invitation and joining board: Exception while invoking method 'login' TypeError: Cannot read property 'loginDisabled' of undefined](https://github.com/wekan/wekan/issues/1331);
+* [Invitation /sign-up page did not show input for invitation code](https://github.com/wekan/wekan/commit/99be745f0299b32a8a7b30204b43bff7fd5ba638).
+
+Thanks to Github users brooksbecton, milesibastos, nztqa, soohwa, thuanpq and xet7 for their contributions.
+
+# v0.54 2017-11-02 Wekan release
+
+This release adds the following new features:
+
+* [Soft WIP Limit](https://github.com/wekan/wekan/pull/1319).
+
+Thanks to GitHub users amadilsons and xet7 for their contributions.
+
+# v0.53 2017-11-02 Wekan release
+
+(This was canceled, it had some missing version numbers).
+
+# v0.52 2017-10-31 Wekan release
+
+This release adds the following new features:
+
+* [Permit editing WIP limit](https://github.com/wekan/wekan/pull/1312);
+* [Image attachment resize on smaller screens and swipebox](https://github.com/wekan/wekan/pull/1315);
+* [Add iPhone favicon for Wekan](https://github.com/wekan/wekan/issues/1317).
+
+and fixes the following bugs:
+
+* [Members do not get included on board import from Wekan](https://github.com/wekan/wekan/pull/1316).
+
+Thanks to GitHub users brooksbecton, guillaumebriday, nztqa, ocdtrekkie and Tentoe for their contributions.
+
+# v0.51 2017-10-25 Wekan release
+
+This release adds the following new features:
+
+* [REST API: Disable and enable user login. Take ownership boards of a user. List boards of user.](https://github.com/wekan/wekan/pull/1296);
+* [Add translation: Spanish of Argentina](https://github.com/wekan/wekan/commit/b105f0e2e72c49a2f1ba3f6c87532a5418192386);
+* [Add more languages to Roboto font](https://github.com/wekan/wekan/issues/1299).
+
+and fixes the following bugs:
+
+* [Segfault on Alpine Linux](https://github.com/wekan/wekan/issues/1303);
+* [Change invitation link from sign-in to sign-up](https://github.com/wekan/wekan/issues/1300);
+* [User with comment only permission can add cards](https://github.com/wekan/wekan/issues/1301).
+
+Thanks to GitHub users chromas-cro, soohwa, wenerme and xet7 for their contributions.
+
 # v0.50 2017-10-10 Wekan release
 
 This release fixes the following bugs:
@@ -444,12 +777,12 @@ and fixes the following bugs:
   exists valid admin panel data MAIL_URL is not set.
   MAIL_FROM was ignored. Same behaviour, env variable has bigger priority
   than database configuration.
-  On both cases, althrought environment variable is set, updating admin-panel
+  On both cases, althought environment variable is set, updating admin-panel
   mail settings will load new info and ignore the environment variable;
 * Dockerfile fix for local packages;
 * Don't send emails if missing smtp host;
 * Remove invitation code if email sending failed;
-* Show customized error msg while invitaion code is wrong during registration;
+* Show customized error msg while invitation code is wrong during registration;
 * Fix "internal error" while registration is done;
 * Fix "cannot access disableRegistration of undefined" error;
 * Add high available server for getting the gpg keys - suppose it should lead
@@ -554,7 +887,7 @@ and adds the following new features:
 ```
   1) Disable Self-Registration and invite users
   2) SMTP settings.
-    
+
   Adding Admin user in mongo cli:
   1) Use database that has wekan data, for example:
      use admin;
@@ -735,7 +1068,7 @@ performance and security. It also features the following improvements:
   password, to change the password, or to enable email confirmation (all of
   which were previously impossible);
 * Avatar customization, including the possibility to upload images and to choose
-  one from Gravatar or the user initials (on Sandstrom we use the avatar exposed
+  one from Gravatar or the user initials (on Sandstorm we use the avatar exposed
   by Sandstorm);
 * Cards multi-selection to facilitate batch actions such as moving all the cards
   of selection, or attaching a label or a member to them;

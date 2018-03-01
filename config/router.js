@@ -8,6 +8,7 @@ FlowRouter.route('/', {
   triggersEnter: [AccountsTemplates.ensureSignedIn],
   action() {
     Session.set('currentBoard', null);
+    Session.set('currentList', null);
     Session.set('currentCard', null);
 
     Filter.reset();
@@ -88,6 +89,7 @@ FlowRouter.route('/import/:source', {
       Session.set('fromBoard', Session.get('currentBoard'));
     }
     Session.set('currentBoard', null);
+    Session.set('currentList', null);
     Session.set('currentCard', null);
     Session.set('importSource', params.source);
 
@@ -106,6 +108,7 @@ FlowRouter.route('/setting', {
     AccountsTemplates.ensureSignedIn,
     () => {
       Session.set('currentBoard', null);
+      Session.set('currentList', null);
       Session.set('currentCard', null);
 
       Filter.reset();
@@ -126,6 +129,7 @@ FlowRouter.route('/information', {
     AccountsTemplates.ensureSignedIn,
     () => {
       Session.set('currentBoard', null);
+      Session.set('currentList', null);
       Session.set('currentCard', null);
 
       Filter.reset();
@@ -136,6 +140,27 @@ FlowRouter.route('/information', {
     BlazeLayout.render('defaultLayout', {
       headerBar: 'settingHeaderBar',
       content: 'information',
+    });
+  },
+});
+
+FlowRouter.route('/people', {
+  name: 'people',
+  triggersEnter: [
+    AccountsTemplates.ensureSignedIn,
+    () => {
+      Session.set('currentBoard', null);
+      Session.set('currentList', null);
+      Session.set('currentCard', null);
+
+      Filter.reset();
+      EscapeActions.executeAll();
+    },
+  ],
+  action() {
+    BlazeLayout.render('defaultLayout', {
+      headerBar: 'settingHeaderBar',
+      content: 'people',
     });
   },
 });

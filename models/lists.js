@@ -49,23 +49,15 @@ Lists.attachSchema(new SimpleSchema({
   'wipLimit.value': {
     type: Number,
     decimal: false,
-    autoValue() {
-      if(this.isInsert){
-        return 0;
-      }
-      return this.value;
-    },
-    optional: true,
+    defaultValue: 1,
   },
-  'wipLimit.enabled':{
+  'wipLimit.enabled': {
     type: Boolean,
-    autoValue() {
-      if(this.isInsert){
-        return false;
-      }
-      return this.value;
-    },
-    optional: true,
+    defaultValue: false,
+  },
+  'wipLimit.soft': {
+    type: Boolean,
+    defaultValue: false,
   },
 }));
 
@@ -83,11 +75,15 @@ Lists.allow({
 });
 
 Lists.helpers({
-  cards() {
-    return Cards.find(Filter.mongoSelector({
+  cards(swimlaneId) {
+    const selector = {
       listId: this._id,
       archived: false,
-    }), { sort: ['sort'] });
+    };
+    if (swimlaneId)
+      selector.swimlaneId = swimlaneId;
+    return Cards.find(Filter.mongoSelector(selector),
+      { sort: ['sort'] });
   },
 
   allCards() {
@@ -123,6 +119,10 @@ Lists.mutations({
     return { $set: { archived: false } };
   },
 
+  toggleSoftLimit(toggle) {
+    return { $set: { 'wipLimit.soft': toggle } };
+  },
+
   toggleWipLimit(toggle) {
     return { $set: { 'wipLimit.enabled': toggle } };
   },
@@ -136,17 +136,25 @@ Meteor.methods({
   applyWipLimit(listId, limit){
     check(listId, String);
     check(limit, Number);
+    if(limit === 0){
+      limit = 1;
+    }
     Lists.findOne({ _id: listId }).setWipLimit(limit);
   },
 
   enableWipLimit(listId) {
     check(listId, String);
     const list = Lists.findOne({ _id: listId });
-    if(list.getWipLimit()){ // Necessary check to avoid exceptions for the case where the doc doesn't have the wipLimit field yet set
-      list.toggleWipLimit(!list.getWipLimit('enabled'));
-    } else {
-      list.toggleWipLimit(true); // First time toggle is always to 'true' because default is 'false'
+    if(list.getWipLimit('value') === 0){
+      list.setWipLimit(1);
     }
+    list.toggleWipLimit(!list.getWipLimit('enabled'));
+  },
+
+  enableSoftLimit(listId) {
+    check(listId, String);
+    const list = Lists.findOne({ _id: listId });
+    list.toggleSoftLimit(!list.getWipLimit('soft'));
   },
 });
 
@@ -193,57 +201,89 @@ if (Meteor.isServer) {
 
 //LISTS REST API
 if (Meteor.isServer) {
-  JsonRoutes.add('GET', '/api/boards/:boardId/lists', function (req, res, next) {
-    const paramBoardId = req.params.boardId;
-    Authentication.checkBoardAccess( req.userId, paramBoardId);
+  JsonRoutes.add('GET', '/api/boards/:boardId/lists', function (req, res) {
+    try {
+      const paramBoardId = req.params.boardId;
+      Authentication.checkBoardAccess( req.userId, paramBoardId);
 
-    JsonRoutes.sendResult(res, {
-      code: 200,
-      data: Lists.find({ boardId: paramBoardId, archived: false }).map(function (doc) {
-        return {
-          _id: doc._id,
-          title: doc.title,
-        };
-      }),
-    });
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: Lists.find({ boardId: paramBoardId, archived: false }).map(function (doc) {
+          return {
+            _id: doc._id,
+            title: doc.title,
+          };
+        }),
+      });
+    }
+    catch (error) {
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: error,
+      });
+    }
   });
 
-  JsonRoutes.add('GET', '/api/boards/:boardId/lists/:listId', function (req, res, next) {
-    const paramBoardId = req.params.boardId;
-    const paramListId = req.params.listId;
-    Authentication.checkBoardAccess( req.userId, paramBoardId);
-    JsonRoutes.sendResult(res, {
-      code: 200,
-      data: Lists.findOne({ _id: paramListId, boardId: paramBoardId, archived: false }),
-    });
+  JsonRoutes.add('GET', '/api/boards/:boardId/lists/:listId', function (req, res) {
+    try {
+      const paramBoardId = req.params.boardId;
+      const paramListId = req.params.listId;
+      Authentication.checkBoardAccess( req.userId, paramBoardId);
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: Lists.findOne({ _id: paramListId, boardId: paramBoardId, archived: false }),
+      });
+    }
+    catch (error) {
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: error,
+      });
+    }
   });
 
-  JsonRoutes.add('POST', '/api/boards/:boardId/lists', function (req, res, next) {
-    Authentication.checkUserId( req.userId);
-    const paramBoardId = req.params.boardId;
-    const id = Lists.insert({
-      title: req.body.title,
-      boardId: paramBoardId,
-    });
-    JsonRoutes.sendResult(res, {
-      code: 200,
-      data: {
-        _id: id,
-      },
-    });
+  JsonRoutes.add('POST', '/api/boards/:boardId/lists', function (req, res) {
+    try {
+      Authentication.checkUserId( req.userId);
+      const paramBoardId = req.params.boardId;
+      const id = Lists.insert({
+        title: req.body.title,
+        boardId: paramBoardId,
+      });
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: {
+          _id: id,
+        },
+      });
+    }
+    catch (error) {
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: error,
+      });
+    }
   });
 
-  JsonRoutes.add('DELETE', '/api/boards/:boardId/lists/:listId', function (req, res, next) {
-    Authentication.checkUserId( req.userId);
-    const paramBoardId = req.params.boardId;
-    const paramListId = req.params.listId;
-    Lists.remove({ _id: paramListId, boardId: paramBoardId });
-    JsonRoutes.sendResult(res, {
-      code: 200,
-      data: {
-        _id: paramListId,
-      },
-    });
+  JsonRoutes.add('DELETE', '/api/boards/:boardId/lists/:listId', function (req, res) {
+    try {
+      Authentication.checkUserId( req.userId);
+      const paramBoardId = req.params.boardId;
+      const paramListId = req.params.listId;
+      Lists.remove({ _id: paramListId, boardId: paramBoardId });
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: {
+          _id: paramListId,
+        },
+      });
+    }
+    catch (error) {
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: error,
+      });
+    }
   });
 
 }

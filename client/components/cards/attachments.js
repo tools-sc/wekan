@@ -11,9 +11,6 @@ Template.attachmentsGalery.events({
   'click .js-download'(event) {
     event.stopPropagation();
   },
-  'click .js-open-viewer'() {
-    // XXX Not implemented!
-  },
   'click .js-add-cover'() {
     Cards.findOne(this.cardId).setCover(this._id);
   },
@@ -63,7 +60,13 @@ Template.cardAttachmentsPopup.events({
       file.boardId = card.boardId;
       file.cardId = card._id;
       file.userId = Meteor.userId();
-      Attachments.insert(file);
+
+      const attachment = Attachments.insert(file);
+
+      if (attachment && attachment._id && attachment.isImage()) {
+        card.setCover(attachment._id);
+      }
+
       Popup.close();
     });
   },
@@ -110,7 +113,12 @@ Template.previewClipboardImagePopup.events({
       file.boardId = card.boardId;
       file.cardId = card._id;
       file.userId = Meteor.userId();
-      Attachments.insert(file);
+      const attachment = Attachments.insert(file);
+
+      if (attachment && attachment._id && attachment.isImage()) {
+        card.setCover(attachment._id);
+      }
+
       pastedResults = null;
       $(document.body).pasteImageReader(() => {});
       Popup.close();

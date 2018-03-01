@@ -146,8 +146,9 @@ BlazeComponent.extendComponent({
   },
 
   pressKey(event) {
-    //If user press enter key inside a form, submit it, so user doesn't have to leave keyboard to submit a form.
-    if (event.keyCode === 13) {
+    //If user press enter key inside a form, submit it
+    //Unless the user is also holding down the 'shift' key
+    if (event.keyCode === 13 && !event.shiftKey) {
       event.preventDefault();
       const $form = $(event.currentTarget).closest('form');
       $form.find('button[type=submit]').click();
@@ -180,8 +181,8 @@ BlazeComponent.extendComponent({
 Template.checklistDeleteDialog.onCreated(() => {
   const $cardDetails = this.$('.card-details');
   this.scrollState = { position: $cardDetails.scrollTop(), //save current scroll position
-                       top: false, //required for smooth scroll animation
-                     };
+    top: false, //required for smooth scroll animation
+  };
   //Callback's purpose is to only prevent scrolling after animation is complete
   $cardDetails.animate({ scrollTop: 0 }, 500, () => { this.scrollState.top = true; });
 

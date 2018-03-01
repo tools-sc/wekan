@@ -1,4 +1,10 @@
+const subManager = new SubsManager();
+
 BlazeComponent.extendComponent({
+  onCreated() {
+    Meteor.subscribe('setting');
+  },
+
   boards() {
     return Boards.find({
       archived: false,
@@ -11,6 +17,16 @@ BlazeComponent.extendComponent({
   isStarred() {
     const user = Meteor.user();
     return user && user.hasStarred(this.currentData()._id);
+  },
+
+  hasOvertimeCards() {
+    subManager.subscribe('board', this.currentData()._id);
+    return this.currentData().hasOvertimeCards();
+  },
+
+  hasSpentTimeCards() {
+    subManager.subscribe('board', this.currentData()._id);
+    return this.currentData().hasSpentTimeCards();
   },
 
   isInvited() {

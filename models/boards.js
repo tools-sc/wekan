@@ -31,6 +31,14 @@ Boards.attachSchema(new SimpleSchema({
       }
     },
   },
+  view: {
+    type: String,
+    autoValue() { // eslint-disable-line consistent-return
+      if (this.isInsert) {
+        return 'board-view-swimlanes';
+      }
+    },
+  },
   createdAt: {
     type: Date,
     autoValue() { // eslint-disable-line consistent-return
@@ -187,6 +195,20 @@ Boards.helpers({
     return Lists.find({ boardId: this._id, archived: false }, { sort: { sort: 1 } });
   },
 
+  swimlanes() {
+    return Swimlanes.find({ boardId: this._id, archived: false }, { sort: { sort: 1 } });
+  },
+
+  hasOvertimeCards(){
+    const card = Cards.findOne({isOvertime: true, boardId: this._id, archived: false} );
+    return card !== undefined;
+  },
+
+  hasSpentTimeCards(){
+    const card = Cards.findOne({spentTime: { $gt: 0 }, boardId: this._id, archived: false} );
+    return card !== undefined;
+  },
+
   activities() {
     return Activities.find({ boardId: this._id }, { sort: { createdAt: -1 } });
   },
@@ -242,6 +264,27 @@ Boards.helpers({
     Boards.direct.update(this._id, { $push: { labels: { _id, name, color } } });
     return _id;
   },
+
+  searchCards(term) {
+    check(term, Match.OneOf(String, null, undefined));
+
+    let query = { boardId: this._id };
+    const projection = { limit: 10, sort: { createdAt: -1 } };
+
+    if (term) {
+      const regex = new RegExp(term, 'i');
+
+      query = {
+        boardId: this._id,
+        $or: [
+          { title: regex },
+          { description: regex },
+        ],
+      };
+    }
+
+    return Cards.find(query, projection);
+  },
 });
 
 Boards.mutations({
@@ -296,6 +339,15 @@ Boards.mutations({
 
   removeLabel(labelId) {
     return { $pull: { labels: { _id: labelId } } };
+  },
+
+  changeOwnership(fromId, toId) {
+    const memberIndex = this.memberIndex(fromId);
+    return {
+      $set: {
+        [`members.${memberIndex}.userId`]: toId,
+      },
+    };
   },
 
   addMember(memberId) {
@@ -556,83 +608,123 @@ if (Meteor.isServer) {
 
 //BOARDS REST API
 if (Meteor.isServer) {
-  JsonRoutes.add('GET', '/api/users/:userId/boards', function (req, res, next) {
-    Authentication.checkLoggedIn(req.userId);
-    const paramUserId = req.params.userId;
-    // A normal user should be able to see their own boards,
-    // admins can access boards of any user
-    Authentication.checkAdminOrCondition(req.userId, req.userId === paramUserId);
+  JsonRoutes.add('GET', '/api/users/:userId/boards', function (req, res) {
+    try {
+      Authentication.checkLoggedIn(req.userId);
+      const paramUserId = req.params.userId;
+      // A normal user should be able to see their own boards,
+      // admins can access boards of any user
+      Authentication.checkAdminOrCondition(req.userId, req.userId === paramUserId);
 
-    const data = Boards.find({
-      archived: false,
-      'members.userId': req.userId,
-    }, {
-      sort: ['title'],
-    }).map(function(board) {
-      return {
-        _id: board._id,
-        title: board.title,
-      };
-    });
-
-    JsonRoutes.sendResult(res, {code: 200, data});
-  });
-
-  JsonRoutes.add('GET', '/api/boards', function (req, res, next) {
-    Authentication.checkUserId(req.userId);
-    JsonRoutes.sendResult(res, {
-      code: 200,
-      data: Boards.find({ permission: 'public' }).map(function (doc) {
+      const data = Boards.find({
+        archived: false,
+        'members.userId': paramUserId,
+      }, {
+        sort: ['title'],
+      }).map(function(board) {
         return {
-          _id: doc._id,
-          title: doc.title,
+          _id: board._id,
+          title: board.title,
         };
-      }),
-    });
+      });
+
+      JsonRoutes.sendResult(res, {code: 200, data});
+    }
+    catch (error) {
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: error,
+      });
+    }
   });
 
-  JsonRoutes.add('GET', '/api/boards/:id', function (req, res, next) {
-    const id = req.params.id;
-    Authentication.checkBoardAccess( req.userId, id);
-
-    JsonRoutes.sendResult(res, {
-      code: 200,
-      data: Boards.findOne({ _id: id }),
-    });
+  JsonRoutes.add('GET', '/api/boards', function (req, res) {
+    try {
+      Authentication.checkUserId(req.userId);
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: Boards.find({ permission: 'public' }).map(function (doc) {
+          return {
+            _id: doc._id,
+            title: doc.title,
+          };
+        }),
+      });
+    }
+    catch (error) {
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: error,
+      });
+    }
   });
 
-  JsonRoutes.add('POST', '/api/boards', function (req, res, next) {
-    Authentication.checkUserId( req.userId);
-    const id = Boards.insert({
-      title: req.body.title,
-      members: [
-        {
-          userId: req.body.owner,
-          isAdmin: true,
-          isActive: true,
-          isCommentOnly: false,
+  JsonRoutes.add('GET', '/api/boards/:id', function (req, res) {
+    try {
+      const id = req.params.id;
+      Authentication.checkBoardAccess(req.userId, id);
+
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: Boards.findOne({ _id: id }),
+      });
+    }
+    catch (error) {
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: error,
+      });
+    }
+  });
+
+  JsonRoutes.add('POST', '/api/boards', function (req, res) {
+    try {
+      Authentication.checkUserId(req.userId);
+      const id = Boards.insert({
+        title: req.body.title,
+        members: [
+          {
+            userId: req.body.owner,
+            isAdmin: true,
+            isActive: true,
+            isCommentOnly: false,
+          },
+        ],
+        permission: 'public',
+        color: 'belize',
+      });
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: {
+          _id: id,
         },
-      ],
-      permission: 'public',
-      color: 'belize',
-    });
-    JsonRoutes.sendResult(res, {
-      code: 200,
-      data: {
-        _id: id,
-      },
-    });
+      });
+    }
+    catch (error) {
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: error,
+      });
+    }
   });
 
-  JsonRoutes.add('DELETE', '/api/boards/:id', function (req, res, next) {
-    Authentication.checkUserId( req.userId);
-    const id = req.params.id;
-    Boards.remove({ _id: id });
-    JsonRoutes.sendResult(res, {
-      code: 200,
-      data:{
-        _id: id,
-      },
-    });
+  JsonRoutes.add('DELETE', '/api/boards/:id', function (req, res) {
+    try {
+      Authentication.checkUserId(req.userId);
+      const id = req.params.id;
+      Boards.remove({ _id: id });
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data:{
+          _id: id,
+        },
+      });
+    }
+    catch (error) {
+      JsonRoutes.sendResult(res, {
+        code: 200,
+        data: error,
+      });
+    }
   });
 }

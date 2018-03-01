@@ -1,8 +1,3 @@
-Meteor.subscribe('setting');
-Meteor.subscribe('mailServer');
-Meteor.subscribe('accountSettings');
-Meteor.subscribe('announcements');
-
 BlazeComponent.extendComponent({
   onCreated() {
     this.error = new ReactiveVar('');
@@ -11,6 +6,11 @@ BlazeComponent.extendComponent({
     this.emailSetting = new ReactiveVar(false);
     this.accountSetting = new ReactiveVar(false);
     this.announcementSetting = new ReactiveVar(false);
+
+    Meteor.subscribe('setting');
+    Meteor.subscribe('mailServer');
+    Meteor.subscribe('accountSettings');
+    Meteor.subscribe('announcements');
   },
 
   setError(error) {
@@ -116,13 +116,28 @@ BlazeComponent.extendComponent({
       const from = this.checkField('#mail-server-from');
       const tls = $('#mail-server-tls.is-checked').length > 0;
       Settings.update(Settings.findOne()._id, {$set:{'mailServer.host':host, 'mailServer.port': port, 'mailServer.username': username,
-          'mailServer.password': password, 'mailServer.enableTLS': tls, 'mailServer.from': from}});
+        'mailServer.password': password, 'mailServer.enableTLS': tls, 'mailServer.from': from}});
     } catch (e) {
       return;
     } finally {
       this.setLoading(false);
     }
 
+  },
+
+  sendSMTPTestEmail() {
+    Meteor.call('sendSMTPTestEmail', (err, ret) => {
+      if (!err && ret) { /* eslint-disable no-console */
+        const message = `${TAPi18n.__(ret.message)}: ${ret.email}`;
+        console.log(message);
+        alert(message);
+      } else {
+        const reason = err.reason || '';
+        const message = `${TAPi18n.__(err.error)}\n${reason}`;
+        console.log(message, err);
+        alert(message);
+      }  /* eslint-enable no-console */
+    });
   },
 
   events(){
@@ -133,6 +148,7 @@ BlazeComponent.extendComponent({
       'click a.js-toggle-board-choose': this.checkBoard,
       'click button.js-email-invite': this.inviteThroughEmail,
       'click button.js-save': this.saveMailServerInfo,
+      'click button.js-send-smtp-test-email': this.sendSMTPTestEmail,
     }];
   },
 }).register('setting');
